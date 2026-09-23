@@ -29,7 +29,8 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          show_full_output: true
+          claude_args: |
+            --allowedTools "Bash(gh pr view:*),Bash(gh pr diff:*),Bash(gh pr comment:*)"
           prompt: |
             Actua como revisor senior de un equipo Java/Spring Boot.
             Lee CLAUDE.md antes de revisar para conocer las convenciones del equipo.
@@ -41,12 +42,15 @@ jobs:
             Se conciso y accionable: para cada problema, propon el cambio concreto.
 
             Cuando termines el analisis, publica el resultado completo como UN
-            UNICO comentario en este Pull Request. Averigua el numero de PR
-            (por ejemplo con `gh pr view --json number -q .number` o a partir
-            del contexto del evento) y ejecuta un unico comando, sin
-            encadenarlo con otros mediante ; o &&:
-
-              gh pr comment <numero-de-PR> --body "<tu revision en Markdown>"
+            UNICO comentario en este Pull Request:
+            1. Escribe la revision completa en Markdown a un fichero temporal,
+               por ejemplo /tmp/review.md (con la herramienta Write, no con Bash).
+            2. Averigua el numero de PR con `gh pr view --json number -q .number`.
+            3. Publica el fichero con un unico comando:
+               gh pr comment <numero-de-PR> --body-file /tmp/review.md
+               No uses --body con el texto inline: el Markdown con
+               encabezados "#" tras saltos de linea es rechazado por el
+               sandbox si se pasa como argumento directo.
 
             Importante: tu respuesta final de texto NO se publica sola en
             GitHub en este modo. Si no ejecutas `gh pr comment`, la revision
