@@ -1,5 +1,6 @@
 package com.imagina.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,8 +14,15 @@ public class Pedido {
 
     private Double importe;
 
+    // JsonIgnoreProperties("pedidos") corta el bucle de serialización: al
+    // devolver un Pedido se incluye su Cliente, pero sin que ese Cliente
+    // vuelva a serializar su lista de pedidos (que incluiría este mismo
+    // Pedido, y así indefinidamente). Bug real detectado al probar
+    // GET /pedidos manualmente, no uno de los 4 problemas plantados para la
+    // demo.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id")
+    @JsonIgnoreProperties({"pedidos"})
     private Cliente cliente;
 
     public Pedido() {

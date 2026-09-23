@@ -1,5 +1,6 @@
 package com.imagina.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -9,6 +10,12 @@ import jakarta.persistence.OneToMany;
 
 import java.util.List;
 
+// JsonIgnoreProperties sobre las propiedades internas del proxy de Hibernate:
+// cuando Cliente se serializa como un proxy sin inicializar (p. ej. desde
+// Pedido.cliente, LAZY), Jackson intenta serializar también
+// "hibernateLazyInitializer"/"handler", que no tienen un serializador propio
+// y provocan un 500. Complementa el corte de ciclo en Pedido.cliente.
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 public class Cliente {
 

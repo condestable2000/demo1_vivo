@@ -1,8 +1,8 @@
 package com.imagina.demo.controller;
 
 import com.imagina.demo.model.Pedido;
-import com.imagina.demo.repository.PedidoRepository;
 import com.imagina.demo.service.ClienteService;
+import com.imagina.demo.service.PedidoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,22 +15,22 @@ import java.util.List;
 @RequestMapping("/pedidos")
 public class PedidoController {
 
-    private final PedidoRepository pedidoRepository;
+    private final PedidoService pedidoService;
     private final ClienteService clienteService;
 
-    public PedidoController(PedidoRepository pedidoRepository, ClienteService clienteService) {
-        this.pedidoRepository = pedidoRepository;
+    public PedidoController(PedidoService pedidoService, ClienteService clienteService) {
+        this.pedidoService = pedidoService;
         this.clienteService = clienteService;
     }
 
     @GetMapping
     public List<Pedido> listar() {
-        return pedidoRepository.findAll();
+        return pedidoService.listarTodos();
     }
 
     @PostMapping
     public Pedido crear(@RequestBody Pedido pedido) {
-        return pedidoRepository.save(pedido);
+        return pedidoService.crear(pedido);
     }
 
     @DeleteMapping("/{id}")
