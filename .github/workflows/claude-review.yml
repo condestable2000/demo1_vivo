@@ -29,7 +29,6 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          show_full_output: true
           prompt: |
             Actua como revisor senior de un equipo Java/Spring Boot.
             Lee CLAUDE.md antes de revisar para conocer las convenciones del equipo.
@@ -39,3 +38,15 @@ jobs:
             3. Incumplimientos de las convenciones de CLAUDE.md.
             4. Endpoints o metodos nuevos sin test asociado.
             Se conciso y accionable: para cada problema, propon el cambio concreto.
+
+            Cuando termines el analisis, publica el resultado completo como UN
+            UNICO comentario en este Pull Request. Averigua el numero de PR
+            (por ejemplo con `gh pr view --json number -q .number` o a partir
+            del contexto del evento) y ejecuta un unico comando, sin
+            encadenarlo con otros mediante ; o &&:
+
+              gh pr comment <numero-de-PR> --body "<tu revision en Markdown>"
+
+            Importante: tu respuesta final de texto NO se publica sola en
+            GitHub en este modo. Si no ejecutas `gh pr comment`, la revision
+            no sera visible para el equipo.
